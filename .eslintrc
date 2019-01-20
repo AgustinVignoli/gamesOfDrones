@@ -1,0 +1,47 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "globals": {
+    "ApplicationRoot": false,
+    "updateTopMenuBadge": false
+  },
+  "plugins": [
+    "const-immutable"
+  ],
+  "rules": {
+    "consistent-return": 0,
+    "const-immutable/no-mutation": "error",
+    "import/no-named-as-default": 0,
+    "import/no-named-as-default-member": 0,
+    "import/prefer-default-export": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "linebreak-style": 0,
+    "max-len": ["warn", { "code": 160 }],
+    "no-underscore-dangle": 0,
+    "object-curly-newline": ["error", {"multiline": true, "minProperties": 6}],
+    "operator-linebreak": 0,
+    "prefer-const": 0,
+    "react/forbid-prop-types": 0,
+    "react/jsx-filename-extension": 0,
+    "react/jsx-one-expression-per-line": 0,
+    "react/no-array-index-key": 1,
+    "react/no-did-update-set-state": 0,
+    "react/require-default-props": 0,
+    "react/sort-prop-types": [2, {
+      "callbacksLast": true,
+      "ignoreCase": true,
+      "requiredFirst": true,
+      "sortShapeProp": false
+    }]
+  },
+  "settings": {
+    "import/resolver": "webpack"
+  }
+}
