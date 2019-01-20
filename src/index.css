@@ -46,7 +46,22 @@ table, td, div[class^="MuiPaper-root-"] {
 div[class^="MuiPaper-root-"] {
   max-width: 820px;
   margin: 50px auto;
-  overflow-x: auto;  
+  overflow-x: auto;
+}
+
+div[class^="MuiPaper-root-"]::-webkit-scrollbar {
+  width: 3px;
+}
+
+div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: transparent;
+  border: 2px solid transparent;
+  box-shadow: inset 0px 0px 34px #fff;
+}
+
+div[class^="MuiPaper-root-"]::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
 @keyframes autofill {
@@ -135,4 +150,10 @@ button:disabled {
 
 .MuiFormControl-marginNormal-2 {
   margin-top: 0 !important;
+}
+
+.game-over {
+  text-align: center;
+  display: table;
+  width: 100%;
 }
