@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { isEmpty, find, isNil } from 'lodash';
 import ScoresTable from './scoresTable';
 import { PlayersSetUp } from './playersSetUp';
 import { WeaponSelection } from './weaponSelection';
 import GameOverScreen from './gameOverScreen';
+import { saveNewGame, saveNewConfig, loadPrevConfig } from '../actions/gameActions';
 
 class Game extends Component {
   constructor(props) {
@@ -20,6 +22,11 @@ class Game extends Component {
     };
   }
 
+  componentDidMount() {
+    const { onLoadConfig } = this.props;
+    onLoadConfig();
+  }
+
   handleNameChange = (event) => {
     const { value: name, id: player } = event.target;
     this.setState(
@@ -31,10 +38,14 @@ class Game extends Component {
         prevCanPlay: prevState.canPlay,
       }),
       () => {
-        const { player1, player2, prevCanPlay } = this.state;
-        if (!isEmpty(player1) && !isEmpty(player2)) {
+        const {
+          player1: { name: name1 },
+          player2: { name: name2 },
+          prevCanPlay,
+        } = this.state;
+        if (!isEmpty(name1) && !isEmpty(name2)) {
           this.setState({ canPlay: true });
-        } else if (isEmpty(player1) || (isEmpty(player2) && prevCanPlay)) {
+        } else if ((isEmpty(name1) || isEmpty(name2)) && prevCanPlay) {
           this.setState({ canPlay: false });
         }
       },
@@ -58,7 +69,7 @@ class Game extends Component {
     }));
   };
 
-  gameOverScreen = () => {
+  showGameOverScreen = () => {
     this.setState({
       showSelectWeapon: false,
       showPlayersName: false,
@@ -67,8 +78,7 @@ class Game extends Component {
   };
 
   getRoundWinner = () => {
-    // const { gameConfiguration } = this.props;
-    const gameConfiguration = [{ move: 'PAPER', kills: 'ROCK' }, { move: 'ROCK', kills: 'SCISSORS' }, { move: 'SCISSORS', kills: 'PAPER' }];
+    const { savedConfig: gameConfiguration } = this.props;
     const {
       player1: { name: p1Name, weapon: p1Weapon, victories: p1PrevVictories },
       player2: { name: p2Name, weapon: p2Weapon, victories: p2PrevVictories },
@@ -112,7 +122,7 @@ class Game extends Component {
       () => {
         if (!isNil(threeRoundsWinner)) {
           this.setState({ winner: threeRoundsWinner }, () => {
-            this.gameOverScreen();
+            this.showGameOverScreen();
           });
         }
       },
@@ -123,8 +133,7 @@ class Game extends Component {
     const {
       canPlay, player1, player2, showSelectWeapon, showPlayersName, roundsHistory, winner,
     } = this.state;
-    // const { weapons } = this.props;
-    const weapons = [{ name: 'ROCK', value: 'ROCK' }, { name: 'PAPER', value: 'PAPER' }, { name: 'SCISSORS', value: 'SCISSORS' }];
+    const { weaponsList: weapons } = this.props;
     const showScores = !isEmpty(roundsHistory);
     const scoresTableProps = {
       players: [{ name: player1.name }, { name: player2.name }],
@@ -159,4 +168,32 @@ class Game extends Component {
   }
 }
 
-export default Game;
+const mapStateToProps = (state) => {
+  const { configurationReducer: { savedConfig, savedGames, weaponsList, errors, isLoaded } } = state;
+  return {
+    savedConfig: isLoaded ? savedConfig : [],
+    savedGames: isLoaded ? savedGames : [],
+    weaponsList: isLoaded ? weaponsList : [],
+    errors,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onSaveGame(game) {
+    dispatch(saveNewGame(game));
+  },
+  // onLoadGames() {
+  //   dispatch(loadGames());
+  // },
+  onSaveConfig(config) {
+    dispatch(saveNewConfig(config));
+  },
+  onLoadConfig() {
+    dispatch(loadPrevConfig());
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Game);

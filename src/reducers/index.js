@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import gameReducer from './gameReducer';
+import configurationReducer from './configurationReducer';
 
 export default history => combineReducers({
-  router: connectRouter(history),
   gameReducer,
+  configurationReducer,
+  router: connectRouter(history),
 });

@@ -7,6 +7,7 @@ import {
   LOAD_CONFIG_FULFILLED,
   LOAD_CONFIG_REJECTED,
 } from '../constants';
+import { getWeapons } from '../model/filters/weaponsListFilter';
 
 const configurationReducer = handleActions(
   {
@@ -37,11 +38,11 @@ const configurationReducer = handleActions(
       isLoaded: false,
     }),
     [LOAD_CONFIG_FULFILLED]: (state, action) => {
-      const { payload: { data } } = action;
-
+      const { payload: { data: [{ moves }] } } = action;
       return {
         ...state,
-        savedConfig: data,
+        savedConfig: moves,
+        weaponsList: getWeapons(moves),
         isLoaded: true,
       };
     },
