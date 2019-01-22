@@ -8,6 +8,7 @@
     "axios": "^0.17.1",
     "babel-polyfill": "^6.26.0",
     "basic-uuid": "0.0.4",
+    "classnames": "^2.2.6",
     "connected-react-router": "^6.2.2",
     "history": "^4.7.2",
     "jest": "^23.6.0",

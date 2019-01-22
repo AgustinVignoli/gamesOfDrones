@@ -41,6 +41,11 @@ class MainMenu extends React.Component {
         >
           <MenuItem key="gameHistory" onClick={this.handleClose}>
             <Route path="/gameHistory" exact>
+              <Link to="/game">Game</Link>
+            </Route>
+          </MenuItem>
+          <MenuItem key="gameHistory" onClick={this.handleClose}>
+            <Route path="/gameHistory" exact>
               <Link to="/gameHistory">History</Link>
             </Route>
           </MenuItem>

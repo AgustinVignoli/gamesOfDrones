@@ -7,7 +7,8 @@ import { ConnectedRouter } from 'connected-react-router';
 import configureStore, { history } from './reducers/configureStore';
 import { Home } from './components/home';
 import Game from './components/game';
-import { Config } from './components/config';
+import Config from './components/config';
+import GameHistory from './components/gameHistory';
 import MainMenu from './components/menu';
 import 'normalize.css';
 import './index.css';
@@ -39,7 +40,8 @@ ReactDOM.render(
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/game" component={Game} />
-            <Route path="/config" component={Config} />
+            <Route path="/gameHistory" component={GameHistory} />
+            <Route path="/configuration" component={Config} />
           </Switch>
         </Fragment>
       </ConnectedRouter>
