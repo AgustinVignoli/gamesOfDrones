@@ -5,7 +5,7 @@ import ScoresTable from './scoresTable';
 import { PlayersSetUp } from './playersSetUp';
 import { WeaponSelection } from './weaponSelection';
 import GameOverScreen from './gameOverScreen';
-import { saveNewGame, saveNewConfig, loadPrevConfig } from '../actions/gameActions';
+import { saveNewGame, loadPrevConfig } from '../actions/gameActions';
 
 class Game extends Component {
   constructor(props) {
@@ -91,7 +91,7 @@ class Game extends Component {
     let p2Victories = p2PrevVictories;
 
     if (p1Weapon === p2Weapon) {
-      result = { winner: 'Tie' };
+      result = { winner: 'Tie', movement: { killer: '', killed: '' } };
     } else if (find(gameConfiguration, { move: p1Weapon, kills: p2Weapon })) {
       p1Victories += 1;
       result = {
@@ -135,6 +135,7 @@ class Game extends Component {
         return newState;
       },
       () => {
+        // mover a didUpdate
         if (!isNil(gameWinner)) {
           this.setState({ winner: gameWinner }, () => {
             const { roundsHistory: rounds } = this.state;
@@ -203,9 +204,9 @@ const mapDispatchToProps = dispatch => ({
   onSaveGame(game) {
     dispatch(saveNewGame(game));
   },
-  onSaveConfig(config) {
-    dispatch(saveNewConfig(config));
-  },
+  // onSaveConfig(config) {
+  //   dispatch(saveNewConfig(config));
+  // },
   onLoadConfig() {
     dispatch(loadPrevConfig());
   },

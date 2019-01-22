@@ -17,7 +17,7 @@ body *, *::before {
   border-color: #fff !important;
 }
 
-h3 {
+h3, #confirmation-dialog-title > h2 {
   text-align: center;
   font-size: 40px;
   font-weight: 300;
@@ -250,7 +250,23 @@ button:disabled {
 
 .delete-button {
   cursor: pointer;
-  background-color: rgb(233, 73, 73);
+  background-color: rgb(233, 73, 73) !important;
   float: right;
   margin-top: 15px;
+}
+
+.delete-button > span {
+  text-indent: -2px;
+}
+
+.align-left {
+  text-align: left;
+}
+
+#confirmation-dialog-title > h2{
+  text-align: left;
+}
+
+div[role="dialog"] > div:first-of-type {
+  background: rgba(0,0,0,.7);
 }

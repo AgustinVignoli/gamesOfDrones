@@ -4,15 +4,17 @@ import {
   loadGame as loadGameSvc,
   saveConfig as saveConfigSvc,
   loadConfig as loadConfigSvc,
+  deleteRecord as deleteRecordSvc,
 } from '../model/services/gameServices';
-import { SAVE_GAME, LOAD_GAME, SAVE_CONFIG, LOAD_CONFIG } from '../constants';
+import { SAVE_GAME, LOAD_GAME, SAVE_CONFIG, LOAD_CONFIG, DELETE_RECORD } from '../constants';
 
 export const {
   saveGame,
   loadGame,
   saveConfig,
   loadConfig,
-} = createActions(SAVE_GAME, LOAD_GAME, SAVE_CONFIG, LOAD_CONFIG);
+  deleteRecord,
+} = createActions(SAVE_GAME, LOAD_GAME, SAVE_CONFIG, LOAD_CONFIG, DELETE_RECORD);
 
 export function saveNewGame(game) {
   return dispatch => (
@@ -23,6 +25,12 @@ export function saveNewGame(game) {
 export function loadGames() {
   return dispatch => (
     dispatch(loadGame({ promise: loadGameSvc() }))
+  );
+}
+
+export function deleteRecordById(id) {
+  return dispatch => (
+    dispatch(deleteRecord({ promise: deleteRecordSvc(id) }))
   );
 }
 

@@ -1,46 +1,74 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { partial, isEmpty } from 'lodash';
+import { partial, isNull, isEmpty } from 'lodash';
 import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
-import { loadGames } from '../actions/gameActions';
+import { loadGames, deleteRecordById } from '../actions/gameActions';
+import Round from './round';
+import ConfirmationDialog from './confirmDialog';
+
+const styles = theme => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+  paper: {
+    width: '80%',
+    maxHeight: 435,
+  },
+});
 
 class GameHistory extends Component {
   constructor(props) {
     super(props);
 
-    const { savedGames } = this.props;
-    this.state = { savedGames: savedGames || [] };
-  }
-
-  componentDidMount() {
-    const { onLoadGames } = this.props;
+    const { savedGames, onLoadGames } = this.props;
+    this.state = { savedGames, openModal: false, confirmDelete: false };
     onLoadGames();
   }
 
   componentDidUpdate(prevProps) {
     const { savedGames: prevSavedGames } = prevProps;
-    const { savedGames } = this.props;
+    const { savedGames, onDeleteRecord } = this.props;
+    const { confirmDelete, recordToBeDeleted } = this.state;
 
     if (savedGames !== prevSavedGames) {
       this.setState({ savedGames });
     }
+
+    if (confirmDelete) {
+      this.setState({ confirmDelete: false }, () => {
+        onDeleteRecord(recordToBeDeleted);
+      });
+    }
   }
 
   handleDeleteRecord = (id) => {
-    const { onDeleteRecord } = this.props;
-    onDeleteRecord(id);
+    this.setState({
+      openModal: true,
+      recordToBeDeleted: id,
+    });
+  };
+
+  handleCloseModal = (confirmDelete) => {
+    this.setState({ confirmDelete, openModal: false });
   };
 
   render() {
-    const { savedGames } = this.state;
-    const savedGamesLoaded = !isEmpty(savedGames);
+    const { savedGames, openModal } = this.state;
+    const { isLoaded, classes } = this.props;
+    const savedGamesLoaded = !isNull(savedGames) && !isEmpty(savedGames);
+    const showLoadingTitle = !isLoaded && isNull(savedGames);
+    const showEmptyHistoryTitle = !savedGamesLoaded;
 
     return (
       <Fragment>
-        {!savedGamesLoaded && <h1 className="game-title"> Loading...</h1>}
+        {showLoadingTitle && <h1 className="game-title">Loading...</h1>}
+        {showEmptyHistoryTitle && <h1 className="game-title">Empty history</h1>}
         {savedGamesLoaded && (
           <Fragment>
             <h1 className="game-title">History</h1>
@@ -62,25 +90,8 @@ class GameHistory extends Component {
                 <div className="rounds">
                   <div className="rounds__wrapper">
                     <p className="rounds-header">Rounds: </p>
-                    {rounds.map(({ winner: roundWinner, looser: roundLooser, movement: { killer, killed } }) => (
-                      <div className="round-bloc">
-                        <div className="round-bloc__winner">
-                          <p>
-                            Winner: <b>{roundWinner}</b>
-                          </p>
-                          <p>
-                            Movement: <b>{killer}</b>
-                          </p>
-                        </div>
-                        <div className="round-bloc__looser">
-                          <p>
-                            Looser: <b>{roundLooser}</b>
-                          </p>
-                          <p>
-                            Movement: <b>{killed}</b>
-                          </p>
-                        </div>
-                      </div>
+                    {rounds.map((round, i) => (
+                      <Round {...round} index={i} />
                     ))}
                   </div>
                 </div>
@@ -93,6 +104,7 @@ class GameHistory extends Component {
             ))}
           </Fragment>
         )}
+        <ConfirmationDialog classes={{ paper: classes.paper }} open={openModal} onClose={this.handleCloseModal} />
       </Fragment>
     );
   }
@@ -107,7 +119,8 @@ GameHistory.propTypes = {
 const mapStateToProps = (state) => {
   const { gameReducer: { savedGames, isLoaded, errors } } = state;
   return {
-    savedGames: isLoaded ? savedGames : [],
+    savedGames: savedGames || null,
+    isLoaded: isLoaded || false,
     errors,
   };
 };
@@ -116,9 +129,12 @@ const mapDispatchToProps = dispatch => ({
   onLoadGames() {
     dispatch(loadGames());
   },
+  onDeleteRecord(id) {
+    dispatch(deleteRecordById(id));
+  },
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(GameHistory);
+)(withStyles(styles)(GameHistory));
