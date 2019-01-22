@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://localhost:5000';
+const url = '/api';
 export const saveGame = game => axios.post(`${url}/saveGame`, { data: game });
 export const loadGame = () => axios.get(`${url}/loadGame`);
 export const saveConfig = config => axios.post(`${url}/saveConfig`, { data: config });

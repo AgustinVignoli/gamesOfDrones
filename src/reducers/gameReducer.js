@@ -15,11 +15,11 @@ const gameReducer = handleActions({
   }),
   [SAVE_GAME_FULFILLED]: (state, action) => {
     const { payload: { data } } = action;
-
+    const prevRecords = state.savedGames || [];
     return {
       ...state,
       savedGames: [
-        ...state.savedGames,
+        ...prevRecords,
         data,
       ],
       isLoaded: true,

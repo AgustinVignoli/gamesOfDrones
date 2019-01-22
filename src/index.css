@@ -33,6 +33,10 @@ h4 {
   font-weight: 300;
 }
 
+a {
+  text-decoration: none;
+}
+
 canvas {
   position: fixed;
   z-index: -1;
@@ -156,4 +160,15 @@ button:disabled {
   text-align: center;
   display: table;
   width: 100%;
+}
+
+.main-menu {
+  position: fixed;
+  right: 15px;
+  top: 15px;
+  z-index: 10;
+}
+
+.main-menu > button {
+  background-color: rgba(0,0,0,.1);
 }

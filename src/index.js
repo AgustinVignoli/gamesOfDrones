@@ -8,6 +8,7 @@ import configureStore, { history } from './reducers/configureStore';
 import { Home } from './components/home';
 import Game from './components/game';
 import { Config } from './components/config';
+import MainMenu from './components/menu';
 import 'normalize.css';
 import './index.css';
 
@@ -33,11 +34,14 @@ ReactDOM.render(
     <Particles {...params} />
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/game" component={Game} />
-          <Route path="/config" component={Config} />
-        </Switch>
+        <Fragment>
+          <MainMenu />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/game" component={Game} />
+            <Route path="/config" component={Config} />
+          </Switch>
+        </Fragment>
       </ConnectedRouter>
     </Provider>
   </Fragment>,

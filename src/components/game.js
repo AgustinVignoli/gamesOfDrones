@@ -78,13 +78,14 @@ class Game extends Component {
   };
 
   getRoundWinner = () => {
-    const { savedConfig: gameConfiguration } = this.props;
+    const { savedConfig: gameConfiguration, onSaveGame } = this.props;
     const {
       player1: { name: p1Name, weapon: p1Weapon, victories: p1PrevVictories },
       player2: { name: p2Name, weapon: p2Weapon, victories: p2PrevVictories },
       roundsHistory,
     } = this.state;
-    let threeRoundsWinner;
+    let gameWinner;
+    let gameLooser;
     let result;
     let p1Victories = p1PrevVictories;
     let p2Victories = p2PrevVictories;
@@ -93,22 +94,36 @@ class Game extends Component {
       result = { winner: 'Tie' };
     } else if (find(gameConfiguration, { move: p1Weapon, kills: p2Weapon })) {
       p1Victories += 1;
-      result = { winner: p1Name, player: 'player1', victories: p1Victories };
+      result = {
+        winner: p1Name,
+        looser: p2Name,
+        movement: { killer: p1Weapon, killed: p2Weapon },
+        player: 'player1',
+        victories: p1Victories,
+      };
     } else {
       p2Victories += 1;
-      result = { winner: p2Name, player: 'player2', victories: p2Victories };
+      result = {
+        winner: p2Name,
+        looser: p1Name,
+        movement: { killer: p2Weapon, killed: p1Weapon },
+        player: 'player2',
+        victories: p2Victories,
+      };
     }
 
     if (p1Victories >= 3) {
-      threeRoundsWinner = p1Name;
+      gameWinner = p1Name;
+      gameLooser = p2Name;
     } else if (p2Victories >= 3) {
-      threeRoundsWinner = p2Name;
+      gameWinner = p2Name;
+      gameLooser = p1Name;
     }
 
     this.setState(
       (prevState) => {
-        const { winner, player, victories } = result;
-        let newState = { roundsHistory: [...roundsHistory, { winner }] };
+        const { winner, looser, movement, player, victories } = result;
+        let newState = { roundsHistory: [...roundsHistory, { winner, looser, movement }] };
 
         if (winner !== 'Tie') {
           newState = {
@@ -120,8 +135,14 @@ class Game extends Component {
         return newState;
       },
       () => {
-        if (!isNil(threeRoundsWinner)) {
-          this.setState({ winner: threeRoundsWinner }, () => {
+        if (!isNil(gameWinner)) {
+          this.setState({ winner: gameWinner }, () => {
+            const { roundsHistory: rounds } = this.state;
+            onSaveGame({
+              winner: gameWinner,
+              looser: gameLooser,
+              rounds,
+            });
             this.showGameOverScreen();
           });
         }
