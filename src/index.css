@@ -270,3 +270,29 @@ button:disabled {
 div[role="dialog"] > div:first-of-type {
   background: rgba(0,0,0,.7);
 }
+
+.menu {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.menu > button {
+  margin-right: 15px;
+}
+
+.menu > button+button {
+  background-color: rgba(0,230,118,.8) !important;
+}
+
+.delete-set {
+  text-align: left;
+}
+
+.configuration-edit {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.actions {
+  text-align: right;
+}

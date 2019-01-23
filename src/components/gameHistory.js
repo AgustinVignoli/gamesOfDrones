@@ -1,11 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { partial, isNull, isEmpty } from 'lodash';
+import { isNull, isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { loadGames, deleteRecordById } from '../actions/gameActions';
 import Round from './round';
 import ConfirmationDialog from './confirmDialog';
@@ -96,9 +98,9 @@ class GameHistory extends Component {
                   </div>
                 </div>
                 <div className="actions">
-                  <Avatar className="delete-button" onClick={partial(this.handleDeleteRecord, _id)}>
-                    <Icon className={classNames('far fa-trash-alt')} />
-                  </Avatar>
+                  <IconButton aria-label="Delete" onClick={() => this.handleDeleteRecord(_id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </div>
               </div>
             ))}

@@ -204,9 +204,6 @@ const mapDispatchToProps = dispatch => ({
   onSaveGame(game) {
     dispatch(saveNewGame(game));
   },
-  // onSaveConfig(config) {
-  //   dispatch(saveNewConfig(config));
-  // },
   onLoadConfig() {
     dispatch(loadPrevConfig());
   },

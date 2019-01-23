@@ -25,11 +25,11 @@ const configurationReducer = handleActions(
       };
     },
     [SAVE_CONFIG_FULFILLED]: (state, action) => {
-      const { payload: { data } } = action;
+      const { payload: { data: { moves } } } = action;
 
       return {
         ...state,
-        savedConfig: data,
+        savedConfig: moves.map(({ move, kills }) => ({ move, kills })),
         isLoaded: true,
       };
     },
@@ -37,7 +37,7 @@ const configurationReducer = handleActions(
       const { payload: { data: [{ moves }] } } = action;
       return {
         ...state,
-        savedConfig: moves,
+        savedConfig: moves.map(({ move, kills }) => ({ move, kills })),
         weaponsList: getWeapons(moves),
         isLoaded: true,
       };
