@@ -65,7 +65,7 @@ class GameHistory extends Component {
     const { isLoaded, classes } = this.props;
     const savedGamesLoaded = !isNull(savedGames) && !isEmpty(savedGames);
     const showLoadingTitle = !isLoaded && isNull(savedGames);
-    const showEmptyHistoryTitle = !savedGamesLoaded;
+    const showEmptyHistoryTitle = !savedGamesLoaded && !showLoadingTitle;
 
     return (
       <Fragment>
