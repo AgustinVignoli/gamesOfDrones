@@ -1,4 +1,4 @@
-# gamesOfDrones
+# gameOfDrones
 Programming assessment for UruIT
 
 ## Getting Started
