@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { uuid } from '../model/system/string';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -38,12 +39,12 @@ function ScoresTable({ classes, players = [], rounds = [] }) {
         </TableHead>
         <TableBody>
           {players.map(player => (
-            <TableRow className={classes.row} key={`player-${Math.random()}`}>
+            <TableRow className={classes.row} key={`player-${uuid()}`}>
               <CustomTableCell component="th" scope="row">
                 {player.name}
               </CustomTableCell>
               {rounds.map(round => (
-                <CustomTableCell align="right">{round.winner === player.name ? 'Win' : (round.winner === 'Tie' && 'Tie') || 'Loose'}</CustomTableCell>
+                <CustomTableCell key={`round-${uuid()}`} align="right">{round.winner === player.name ? 'Win' : (round.winner === 'Tie' && 'Tie') || 'Loose'}</CustomTableCell>
               ))}
             </TableRow>
           ))}

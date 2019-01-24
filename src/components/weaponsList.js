@@ -4,6 +4,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { uuid } from '../model/system/string';
 
 export default function WeaponsList({ player, handleSelectWeapon, weapons }) {
   const { name, weapon: playerWeapon, label } = player;
@@ -24,8 +25,8 @@ export default function WeaponsList({ player, handleSelectWeapon, weapons }) {
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        {weapons.map((weapon, index) => (
-          <MenuItem value={weapon.value} key={index}>
+        {weapons.map(weapon => (
+          <MenuItem value={weapon.value} key={`weapon-${uuid()}`}>
             {weapon.name}
           </MenuItem>
         ))}

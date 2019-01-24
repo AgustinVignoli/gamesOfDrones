@@ -11,6 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { loadGames, deleteRecordById } from '../actions/gameActions';
 import Round from './round';
 import ConfirmationDialog from './confirmDialog';
+import { uuid } from '../model/system/string';
 
 const styles = theme => ({
   root: {
@@ -75,7 +76,7 @@ class GameHistory extends Component {
           <Fragment>
             <h1 className="game-title">History</h1>
             {savedGames.map(({ _id, winner, looser, rounds }, index) => (
-              <div className="match">
+              <div className="match" key={`match-${uuid()}`}>
                 <div className="match-number">{index + 1}</div>
                 <div className="winner-avatar">
                   <Avatar className="winner-avatar__icon">
@@ -93,7 +94,7 @@ class GameHistory extends Component {
                   <div className="rounds__wrapper">
                     <p className="rounds-header">Rounds: </p>
                     {rounds.map((round, i) => (
-                      <Round {...round} index={i} />
+                      <Round {...round} index={i} key={`round-${uuid()}`} />
                     ))}
                   </div>
                 </div>
@@ -113,9 +114,9 @@ class GameHistory extends Component {
 }
 
 GameHistory.propTypes = {
-  savedGames: PropTypes.array.isRequired,
   onDeleteRecord: PropTypes.func.isRequired,
   onLoadGames: PropTypes.func.isRequired,
+  savedGames: PropTypes.array,
 };
 
 const mapStateToProps = (state) => {
