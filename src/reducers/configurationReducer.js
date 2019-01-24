@@ -7,7 +7,7 @@ import {
   LOAD_CONFIG_FULFILLED,
   LOAD_CONFIG_REJECTED,
 } from '../constants';
-import { getWeapons } from '../model/filters/weaponsListFilter';
+import { getWeapons } from '../model/utils/buildWeaponsList';
 
 const configurationReducer = handleActions(
   {

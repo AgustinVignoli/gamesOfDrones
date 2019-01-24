@@ -57,11 +57,13 @@ div[class^="MuiPaper-root-"] {
   overflow-x: auto;
 }
 
-div[class^="MuiPaper-root-"]::-webkit-scrollbar, .rounds::-webkit-scrollbar {
+div[class^="MuiPaper-root-"]::-webkit-scrollbar,
+.rounds::-webkit-scrollbar {
   width: 3px;
 }
 
-div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb, .rounds::-webkit-scrollbar-thumb {
+div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb,
+.rounds::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: transparent;
   border: 2px solid transparent;
@@ -72,7 +74,8 @@ div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb, .rounds::-webkit-scrollba
   background-color: #fff;
 }
 
-div[class^="MuiPaper-root-"]::-webkit-scrollbar-track, .rounds::-webkit-scrollbar-track {
+div[class^="MuiPaper-root-"]::-webkit-scrollbar-track,
+.rounds::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
@@ -295,4 +298,15 @@ div[role="dialog"] > div:first-of-type {
 
 .actions {
   text-align: right;
+}
+
+#menu-player1-weapons div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb,
+#menu-player2-weapons div[class^="MuiPaper-root-"]::-webkit-scrollbar-thumb {
+  background-color: #fff !important;
+}
+
+#menu-player1-weapons div[class^="MuiPaper-root-"] > ul[class^="MuiList-root-"],
+#menu-player2-weapons div[class^="MuiPaper-root-"] > ul[class^="MuiList-root-"] {
+  width: 100% !important;
+  padding-right: 0 !important;
 }

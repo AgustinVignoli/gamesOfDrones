@@ -1,0 +1,27 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "IE >= 10"]
+        }
+      }
+    ],
+    "react"
+  ],
+  "plugins": [
+    "transform-class-properties",
+    "transform-es2015-destructuring",
+    "transform-object-rest-spread",
+    "syntax-dynamic-import",
+    "babel-plugin-transform-decorators-legacy",
+    "lodash"
+  ],
+  "env": {
+    "testing": {
+      "presets": [["env", { "modules": false }], "react"],
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  }
+}

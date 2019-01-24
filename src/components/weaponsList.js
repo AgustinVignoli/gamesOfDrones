@@ -7,10 +7,13 @@ import Select from '@material-ui/core/Select';
 
 export default function WeaponsList({ player, handleSelectWeapon, weapons }) {
   const { name, weapon: playerWeapon, label } = player;
+  const MenuProps = { PaperProps: { style: { maxHeight: 200 } } };
+
   return (
     <FormControl className="select-weapon__from-control">
       <InputLabel htmlFor={`${label}-weapons`}>{`${name}´s weapon:`}</InputLabel>
       <Select
+        MenuProps={MenuProps}
         value={playerWeapon}
         onChange={e => handleSelectWeapon(e, label)}
         inputProps={{

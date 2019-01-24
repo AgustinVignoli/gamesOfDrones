@@ -15,6 +15,7 @@ class Game extends Component {
       player1: { name: '', weapon: '', victories: 0, label: 'player1' },
       player2: { name: '', weapon: '', victories: 0, label: 'player2' },
       winner: null,
+      looser: null,
       roundsHistory: [],
       canPlay: false,
       showSelectWeapon: false,
@@ -27,29 +28,44 @@ class Game extends Component {
     onLoadConfig();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const {
+      winner,
+      looser,
+      roundsHistory,
+      player1: { name: name1 },
+      player2: { name: name2 },
+    } = this.state;
+    const { canPlay: prevCanPlay } = prevState;
+    const { onSaveGame } = this.props;
+
+    if (!isNil(winner)) {
+      this.setState({
+        matchWinner: winner,
+        winner: null,
+        showSelectWeapon: false,
+        showPlayersName: false,
+        roundsHistory: [],
+      }, () => (
+        onSaveGame({ winner, looser, rounds: roundsHistory })
+      ));
+    }
+
+    if (!isEmpty(name1) && !isEmpty(name2) && !prevCanPlay) {
+      this.setState({ canPlay: true });
+    } else if ((isEmpty(name1) || isEmpty(name2)) && prevCanPlay) {
+      this.setState({ canPlay: false });
+    }
+  }
+
   handleNameChange = (event) => {
     const { value: name, id: player } = event.target;
-    this.setState(
-      prevState => ({
-        [player]: {
-          ...prevState[player],
-          name,
-        },
-        prevCanPlay: prevState.canPlay,
-      }),
-      () => {
-        const {
-          player1: { name: name1 },
-          player2: { name: name2 },
-          prevCanPlay,
-        } = this.state;
-        if (!isEmpty(name1) && !isEmpty(name2)) {
-          this.setState({ canPlay: true });
-        } else if ((isEmpty(name1) || isEmpty(name2)) && prevCanPlay) {
-          this.setState({ canPlay: false });
-        }
+    this.setState(prevState => ({
+      [player]: {
+        ...prevState[player],
+        name,
       },
-    );
+    }));
   };
 
   handleSelectWeapon = (event, player) => {
@@ -69,16 +85,8 @@ class Game extends Component {
     }));
   };
 
-  showGameOverScreen = () => {
-    this.setState({
-      showSelectWeapon: false,
-      showPlayersName: false,
-      roundsHistory: [],
-    });
-  };
-
   getRoundWinner = () => {
-    const { savedConfig: gameConfiguration, onSaveGame } = this.props;
+    const { savedConfig: gameConfiguration } = this.props;
     const {
       player1: { name: p1Name, weapon: p1Weapon, victories: p1PrevVictories },
       player2: { name: p2Name, weapon: p2Weapon, victories: p2PrevVictories },
@@ -90,9 +98,7 @@ class Game extends Component {
     let p1Victories = p1PrevVictories;
     let p2Victories = p2PrevVictories;
 
-    if (p1Weapon === p2Weapon) {
-      result = { winner: 'Tie', movement: { killer: '', killed: '' } };
-    } else if (find(gameConfiguration, { move: p1Weapon, kills: p2Weapon })) {
+    if (find(gameConfiguration, { move: p1Weapon, kills: p2Weapon })) {
       p1Victories += 1;
       result = {
         winner: p1Name,
@@ -101,7 +107,7 @@ class Game extends Component {
         player: 'player1',
         victories: p1Victories,
       };
-    } else {
+    } else if (find(gameConfiguration, { move: p2Weapon, kills: p1Weapon })) {
       p2Victories += 1;
       result = {
         winner: p2Name,
@@ -110,6 +116,8 @@ class Game extends Component {
         player: 'player2',
         victories: p2Victories,
       };
+    } else {
+      result = { winner: 'Tie', movement: { killer: '', killed: '' } };
     }
 
     if (p1Victories >= 3) {
@@ -120,40 +128,32 @@ class Game extends Component {
       gameLooser = p1Name;
     }
 
-    this.setState(
-      (prevState) => {
-        const { winner, looser, movement, player, victories } = result;
-        let newState = { roundsHistory: [...roundsHistory, { winner, looser, movement }] };
+    this.setState((prevState) => {
+      const { winner, looser, movement, player, victories } = result;
+      let newState = { roundsHistory: [...roundsHistory, { winner, looser, movement }] };
 
-        if (winner !== 'Tie') {
-          newState = {
-            ...newState,
-            [player]: { ...prevState[player], victories },
-          };
-        }
+      if (winner !== 'Tie') {
+        newState = {
+          ...newState,
+          [player]: { ...prevState[player], victories },
+        };
+      }
 
-        return newState;
-      },
-      () => {
-        // mover a didUpdate
-        if (!isNil(gameWinner)) {
-          this.setState({ winner: gameWinner }, () => {
-            const { roundsHistory: rounds } = this.state;
-            onSaveGame({
-              winner: gameWinner,
-              looser: gameLooser,
-              rounds,
-            });
-            this.showGameOverScreen();
-          });
-        }
-      },
-    );
+      if (!isNil(gameWinner)) {
+        newState = {
+          ...newState,
+          winner: gameWinner,
+          looser: gameLooser,
+        };
+      }
+
+      return newState;
+    });
   };
 
   render() {
     const {
-      canPlay, player1, player2, showSelectWeapon, showPlayersName, roundsHistory, winner,
+      canPlay, player1, player2, showSelectWeapon, showPlayersName, roundsHistory, matchWinner,
     } = this.state;
     const { weaponsList: weapons } = this.props;
     const showScores = !isEmpty(roundsHistory);
@@ -176,8 +176,8 @@ class Game extends Component {
       getRoundWinner: this.getRoundWinner,
       weapons,
     };
-    const gameOverScreenProps = { winner };
-    const showGameOverScreen = winner && !showPlayersName && !showSelectWeapon && !showScores;
+    const gameOverScreenProps = { winner: matchWinner };
+    const showGameOverScreen = matchWinner && !showPlayersName && !showSelectWeapon && !showScores;
 
     return (
       <div className="game-canvas">
@@ -191,12 +191,10 @@ class Game extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { configurationReducer: { savedConfig, savedGames, weaponsList, errors, isLoaded } } = state;
+  const { configurationReducer: { savedConfig, weaponsList, isLoaded } } = state;
   return {
     savedConfig: isLoaded ? savedConfig : [],
-    savedGames: isLoaded ? savedGames : [],
     weaponsList: isLoaded ? weaponsList : [],
-    errors,
   };
 };
 

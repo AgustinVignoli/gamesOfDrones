@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, findIndex, filter } from 'lodash';
+import { find, findIndex, filter, isEmpty } from 'lodash';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Fab from '@material-ui/core/Fab';
@@ -19,7 +19,7 @@ class Configuration extends Component {
 
     const { savedConfig } = this.props;
     this.manuallySavedConfig = false;
-    this.state = { savedConfig, showConfigSavedMessage: false };
+    this.state = { savedConfig, showConfigSavedMessage: false, configSavedMessage: '' };
   }
 
   componentDidMount() {
@@ -35,7 +35,11 @@ class Configuration extends Component {
       let newState = { savedConfig };
       if (this.manuallySavedConfig) {
         this.manuallySavedConfig = false;
-        newState = { ...newState, showConfigSavedMessage: true };
+        newState = {
+          ...newState,
+          showConfigSavedMessage: true,
+          configSavedMessage: 'Configuration saved!',
+        };
       }
       this.setState(newState);
     }
@@ -66,7 +70,11 @@ class Configuration extends Component {
     const { savedConfig } = this.state;
     const { onSaveConfig } = this.props;
     const configList = filter(savedConfig, ({ move, kills }) => move !== '' && kills !== '');
-    onSaveConfig({ moves: configList });
+    if (!isEmpty(configList)) {
+      onSaveConfig({ moves: configList });
+    } else {
+      this.setState({ showConfigSavedMessage: true, configSavedMessage: 'Can\'t save an empty configuration' });
+    }
   };
 
   handleClose = () => {
@@ -83,59 +91,64 @@ class Configuration extends Component {
   };
 
   render() {
-    const { savedConfig, showConfigSavedMessage } = this.state;
+    const { savedConfig, showConfigSavedMessage, configSavedMessage } = this.state;
     const { isLoaded } = this.props;
 
     return (
       <div className="configuration-edit">
-        <h3 className="row">Edit your configuration:</h3>
-        {savedConfig.map(({ move, kills }, index) => (
-          <div className="set-of-movement row" key={index}>
-            <div className="col-40">
-              <TextField
-                value={move}
-                onChange={e => this.handleEditSet(e, index, 'move')}
-                InputProps={{ startAdornment: <InputAdornment position="start">Move:</InputAdornment> }}
-              />
+        {!isLoaded && <h3 className="row">Loading...</h3>}
+        {isLoaded && (
+          <Fragment>
+            <h3 className="row">Edit your configuration:</h3>
+            {savedConfig.map(({ move, kills }, index) => (
+              <div className="set-of-movement row" key={index}>
+                <div className="col-40">
+                  <TextField
+                    value={move}
+                    onChange={e => this.handleEditSet(e, index, 'move')}
+                    InputProps={{ startAdornment: <InputAdornment position="start">Move:</InputAdornment> }}
+                  />
+                </div>
+                <div className="col-40">
+                  <TextField
+                    value={kills}
+                    onChange={e => this.handleEditSet(e, index, 'kills')}
+                    InputProps={{ startAdornment: <InputAdornment position="start">Kills:</InputAdornment> }}
+                  />
+                </div>
+                <div className="col-20 delete-set">
+                  <IconButton aria-label="Delete" onClick={() => this.handleDeleteSet(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              </div>
+            ))}
+            <div className="menu">
+              <Fab color="primary" size="medium" aria-label="Add" className="add-set" onClick={() => this.addNewSet()}>
+                <AddIcon />
+              </Fab>
+              <Fab color="secondary" disabled={!isLoaded} size="medium" aria-label="Save" className="save-set" onClick={() => this.saveNewConfig()}>
+                <SaveIcon />
+              </Fab>
             </div>
-            <div className="col-40">
-              <TextField
-                value={kills}
-                onChange={e => this.handleEditSet(e, index, 'kills')}
-                InputProps={{ startAdornment: <InputAdornment position="start">Kills:</InputAdornment> }}
-              />
-            </div>
-            <div className="col-20 delete-set">
-              <IconButton aria-label="Delete" onClick={() => this.handleDeleteSet(index)}>
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          </div>
-        ))}
-        <div className="menu">
-          <Fab color="primary" size="medium" aria-label="Add" className="add-set" onClick={() => this.addNewSet()}>
-            <AddIcon />
-          </Fab>
-          <Fab color="secondary" disabled={!isLoaded} size="medium" aria-label="Save" className="save-set" onClick={() => this.saveNewConfig()}>
-            <SaveIcon />
-          </Fab>
-        </div>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={showConfigSavedMessage}
-          autoHideDuration={6000}
-          onClose={this.handleClose}
-          ContentProps={{ 'aria-describedby': 'message-id' }}
-          message={<span id="message-id">Configuration saved</span>}
-          action={[
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={this.handleClose}>
-              <CloseIcon />
-            </IconButton>,
-          ]}
-        />
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              open={showConfigSavedMessage}
+              autoHideDuration={6000}
+              onClose={this.handleClose}
+              ContentProps={{ 'aria-describedby': 'message-id' }}
+              message={<span id="message-id">{configSavedMessage}</span>}
+              action={[
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={this.handleClose}>
+                  <CloseIcon />
+                </IconButton>,
+              ]}
+            />
+          </Fragment>
+        )}
       </div>
     );
   }
