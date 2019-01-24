@@ -11,7 +11,7 @@ NodeJS installed
 
 ### Installing
 
-Open a command promot on the root folder and execute the following commads:
+Open a command prompt on the root folder and execute the following commads:
 
 ```
 npm install
@@ -34,11 +34,30 @@ Just run the following command:
 jest
 ```
 
+## Folder structure
+
+```
+├───actions
+├───components
+├───constants
+├───model
+│   ├───services
+│   └───utils
+├───reducers
+└───tests
+    ├───actions
+    ├───components
+    │   └───__snapshots__
+    ├───model
+    │   └───utils
+    └───reducer
+```
+
 ## Built With
 
 * [Create React App](https://github.com/facebook/create-react-app)
 * [Material UI](https://material-ui.com/)
 
-## Authors
+## Author
 
 * **Agustin Vignoli** - for UruIT
